@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ask Her Out</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #3b2c2c; /* Dark brown from video */
+            color: #fff;
+            text-align: center;
+            overflow: hidden; /* Prevent scrollbars if button moves outside initial view */
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            border-radius: 15px;
+            background-color: rgba(0, 0, 0, 0.2); /* Slightly transparent background for the container */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+            position: relative; /* Crucial for absolute button positioning */
+            min-height: 400px; /* Ensure enough space for content and button movement */
+            min-width: 300px;
+            max-width: 90%;
+        }
+
+        .emoji-image {
+            width: 150px;
+            height: 150px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            object-fit: contain;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: #ffd700; /* Gold-like color for emphasis */
+            transition: all 0.5s ease-in-out;
+        }
+
+        p {
+            font-size: 1.2em;
+            color: #ccc;
+            margin-bottom: 30px;
+            transition: all 0.5s ease-in-out;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            min-width: 100px;
+            position: absolute; /* Both buttons absolute within container */
+            bottom: 30px; /* Initial vertical position */
+            z-index: 10; /* Ensure buttons are on top */
+        }
+
+        .btn.yes {
+            background-color: #4CAF50; /* Green */
+            color: #fff;
+            left: 50%;
+            transform: translateX(-100px); /* Position left of center */
+        }
+
+        .btn.yes:hover {
+            background-color: #45a049;
+            transform: translateX(-100px) translateY(-2px);
+        }
+
+        .btn.no {
+            background-color: #f44336; /* Red */
+            color: #fff;
+            left: 50%;
+            transform: translateX(50px); /* Position right of center */
+            transition: all 0.3s ease-out, transform 0s; /* Smooth movement, but transform updates immediately */
+        }
+
+        .btn.no:hover {
+            background-color: #da190b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img id="mainImage" src="https://i.imgur.com/i4j1F6K.png" alt="Cute Cat" class="emoji-image">
+        <h1 id="questionText">DO you love me? 🤗</h1>
+        <p id="subText">~mai tera hi hoo</p>
+        <button id="yesButton" class="btn yes">Yes</button>
+        <button id="noButton" class="btn no">No</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const mainImage = document.getElementById('mainImage');
+            const questionText = document.getElementById('questionText');
+            const subText = document.getElementById('subText');
+            const yesButton = document.getElementById('yesButton');
+            const noButton = document.getElementById('noButton');
+            const container = document.querySelector('.container');
+
+            const states = [
+                {
+                    question: "DO you love me? 🤗",
+                    subtext: "~mai tera hi hoo",
+                    imageSrc: "https://i.imgur.com/i4j1F6K.png" // Placeholder: white cat holding pink heart
+                },
+                {
+                    question: "Soch le ache se! 🥺",
+                    subtext: "itte jldi nhi mtt bol 😟",
+                    imageSrc: "https://i.imgur.com/r3a6tF5.png" // Placeholder: white panda
+                },
+                {
+                    question: "Ek aur baar Soch le! 😩",
+                    subtext: "kyu aisa kr rahi hai 😔",
+                    imageSrc: "https://i.imgur.com/9nF8t7U.png" // Placeholder: ghost comforting crying figure
+                },
+                {
+                    question: "Manja na! Kitna bhav khaegi 😭",
+                    subtext: "bht glt baat hai 😭",
+                    imageSrc: "https://i.imgur.com/R3aGf2J.png" // Placeholder: comforting cats
+                }
+            ];
+
+            let currentStateIndex = 0;
+
+            noButton.addEventListener('click', () => {
+                currentStateIndex = (currentStateIndex + 1) % states.length; // Loop through states
+                const newState = states[currentStateIndex];
+
+                mainImage.src = newState.imageSrc;
+                questionText.textContent = newState.question;
+                subText.textContent = newState.subtext;
+
+                moveNoButtonRandomly();
+            });
+
+            yesButton.addEventListener('click', () => {
+                mainImage.src = "https://i.imgur.com/kS5D3oQ.png"; // Example success image (heart)
+                questionText.textContent = "I love you too! ❤️";
+                subText.textContent = "Thank you for saying Yes!";
+                yesButton.style.display = 'none';
+                noButton.style.display = 'none';
+                // You can add more celebratory effects here
+            });
+
+            function moveNoButtonRandomly() {
+                const containerRect = container.getBoundingClientRect();
+                const buttonWidth = noButton.offsetWidth;
+                const buttonHeight = noButton.offsetHeight;
+
+                // Define padding to keep button from edges and prevent overlap with main content
+                const contentAreaBottom = subText.getBoundingClientRect().bottom - containerRect.top + 20; // Below subtext
+                const contentAreaTop = mainImage.getBoundingClientRect().top - containerRect.top - 20; // Above image
+                
+                const padding = 20; // Minimum padding from container edges
+
+                const minX = padding;
+                const maxX = containerRect.width - buttonWidth - padding;
+                const minY = contentAreaBottom; // Start moving below the text content
+                const maxY = containerRect.height - buttonHeight - padding;
+
+                let newX, newY;
+                let collision = true;
+                let attempts = 0;
+                const maxAttempts = 50;
+
+                while (collision && attempts < maxAttempts) {
+                    newX = Math.random() * (maxX - minX) + minX;
+                    newY = Math.random() * (maxY - minY) + minY;
+
+                    // Simple check to avoid overlapping the initial Yes button area roughly
+                    const yesButtonLeft = yesButton.offsetLeft;
+                    const yesButtonRight = yesButtonLeft + yesButton.offsetWidth;
+                    const yesButtonTop = yesButton.offsetTop;
+                    const yesButtonBottom = yesButtonTop + yesButton.offsetHeight;
+
+                    const noLeft = newX;
+                    const noRight = newX + buttonWidth;
+                    const noTop = newY;
+                    const noBottom = newY + buttonHeight;
+
+                    // Check for overlap with Yes button
+                    const overlapX = Math.max(0, Math.min(noRight, yesButtonRight) - Math.max(noLeft, yesButtonLeft));
+                    const overlapY = Math.max(0, Math.min(noBottom, yesButtonBottom) - Math.max(noTop, yesButtonTop));
+
+                    if (overlapX <= 0 || overlapY <= 0) { // No actual overlap
+                        collision = false;
+                    } else {
+                        attempts++;
+                    }
+                }
+
+                noButton.style.left = `${newX}px`;
+                noButton.style.top = `${newY}px`;
+                noButton.style.right = 'auto'; // Clear other position properties
+                noButton.style.bottom = 'auto';
+                noButton.style.transform = 'none'; // Remove any translateX from initial state
+
+                if (attempts >= maxAttempts) {
+                    console.warn("Could not find a non-colliding position for No button after many attempts. Placing randomly.");
+                    noButton.style.left = `${Math.random() * (maxX - minX) + minX}px`;
+                    noButton.style.top = `${Math.random() * (maxY - minY) + minY}px`;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
